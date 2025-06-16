@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI vs Non-AI Gadgets</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+    }
+    .label {
+      margin: 5px;
+      padding: 8px 12px;
+      background-color: #f0f0f0;
+      border: 1px solid #888;
+      display: inline-block;
+      cursor: grab;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .container {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+    .bin {
+      border: 2px dashed gray;
+      width: 40%;
+      padding: 10px;
+    }
+    .dropzone {
+      min-height: 150px;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
+    .correct-label {
+      background-color: #c8f7c5;
+      border-color: #2ecc71;
+      color: #2c662d;
+    }
+    .incorrect-label {
+      background-color: #f7c5c5;
+      border-color: #e74c3c;
+      color: #a01919;
+    }
+    .bin img {
+      width: 80px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Drag and drop each gadget into the correct bin</h2>
+
+<div id="labels"></div>
+
+<div class="container">
+  <div class="bin">
+    <h3>Non-AI-based</h3>
+    <img src="Pic1.png" alt="Non-AI Icon">
+    <div id="nonAiDropZone" class="dropzone" ondragover="allowDrop(event)" ondrop="drop(event, 'nonAI')"></div>
+  </div>
+
+  <div class="bin">
+    <h3>AI-based</h3>
+    <img src="Pic2.png" alt="AI Icon">
+    <div id="aiDropZone" class="dropzone" ondragover="allowDrop(event)" ondrop="drop(event, 'AI')"></div>
+  </div>
+</div>
+
+<script>
+const aiGadgets = [
+  "Smart TV",
+  "Cleaning robots",
+  "Smart lighting",
+  "Siri",
+  "Alexa",
+  "Self-driving car",
+  "Face recognition lock",
+  "Language translator app",
+  "Chatbot",
+  "AI traffic system"
+];
+
+const nonAiGadgets = [
+  "Solar water heater",
+  "Security cameras",
+  "Rainwater harvesting system",
+  "Automatic door",
+  "Automatic washing machine",
+  "Electric fan",
+  "Toaster",
+  "Microwave oven",
+  "Water purifier",
+  "Photocopier"
+];
+
+const allGadgets = aiGadgets.map(name => ({ name, type: "AI" }))
+  .concat(nonAiGadgets.map(name => ({ name, type: "nonAI" })));
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+shuffle(allGadgets);
+
+const labelsDiv = document.getElementById("labels");
+
+allGadgets.forEach(gadget => {
+  const div = document.createElement("div");
+  div.className = "label";
+  div.id = gadget.name;
+  div.textContent = gadget.name;
+  div.draggable = true;
+  div.addEventListener("dragstart", drag);
+  labelsDiv.appendChild(div);
+});
+
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev, binType) {
+  ev.preventDefault();
+  const data = ev.dataTransfer.getData("text");
+  const item = document.getElementById(data);
+
+  if (ev.target.classList.contains("dropzone")) {
+    ev.target.appendChild(item);
+  }
+
+  item.classList.remove("correct-label", "incorrect-label");
+
+  if ((binType === "AI" && aiGadgets.includes(item.id)) ||
+      (binType === "nonAI" && nonAiGadgets.includes(item.id))) {
+    item.classList.add("correct-label");
+  } else {
+    item.classList.add("incorrect-label");
+  }
+}
+</script>
+
+</body>
+</html>
